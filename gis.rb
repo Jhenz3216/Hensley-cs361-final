@@ -12,35 +12,36 @@ class Track
   end
 
   def get_track_json()
-    j = '{"type": "Feature", '
+    json = '{"type": "Feature", '
     if @name != nil
-      j += '"properties": {"title": "' + @name + '"},'
+      json += '"properties": {"title": "' + @name + '"},'
     end
-    j += '"geometry": {"type": "MultiLineString","coordinates": ['
+    json += '"geometry": {"type": "MultiLineString","coordinates": ['
     # Loop through all the segment objects
     @segments.each_with_index do |s, index|
       if index > 0
-        j += ","
+        json += ","
       end
-      j += '['
+      json += '['
       # Loop through all the coordinates in the segment
       tsj = ''
-      s.coordinates.each do |c|
+      s.coordinates.each do |cord|
         if tsj != ''
           tsj += ','
         end
         # Add the coordinate
-        tsj += "[#{c.lon},#{c.lat}"
-        if c.ele != nil
-          tsj += ",#{c.ele}"
+        tsj += "[#{cord.lon},#{cord.lat}"
+        if cord.ele != nil
+          tsj += ",#{cord.ele}"
         end
         tsj += ']'
       end
-      j+=tsj + ']'
+      json += tsj + ']'
     end
-    j + ']}}'
+    json + ']}}'
   end
 end
+
 class TrackSegment
   attr_reader :coordinates
   def initialize(coordinates)
@@ -52,7 +53,7 @@ class Point
 
   attr_reader :lat, :lon, :ele
 
-  def initialize(lon, lat, ele=nil)
+  def initialize(lon, lat, ele = nil)
     @lon = lon
     @lat = lat
     @ele = ele
@@ -63,37 +64,36 @@ class Waypoint
 
 
 
-attr_reader :lat, :lon, :ele, :name, :type
+attr_reader :point, :name, :type
 
   def initialize(lon, lat, ele=nil, name=nil, type=nil)
-    @lat = lat
-    @lon = lon
-    @ele = ele
+    @point = Point.new(lon, lat, ele)
     @name = name
     @type = type
   end
 
   def get_waypoint_json(indent=0)
-    j = `{"type": "Feature","geometry": {"type": "Point","coordinates": [#{@lon},#{@lat}`
-    if ele != nil
-      j += ",#{@ele}"
+    json = '{"type": "Feature","geometry": {"type": "Point","coordinates": ['
+    json += "#{@point.lon},#{@point.lat}"
+    if point.ele != nil
+      json += ",#{@point.ele}"
     end
-    j += ']},'
+    json += ']},'
     if name != nil or type != nil
-      j += '"properties": {'
+      json += '"properties": {'
       if name != nil
-        j += '"title": "' + @name + '"'
+        json += '"title": "' + @name + '"'
       end
       if type != nil
         if name != nil
-          j += ','
+          json += ','
         end
-        j += '"icon": "' + @type + '"'
+        json += '"icon": "' + @type + '"'
       end
-      j += '}'
+      json += '}'
     end
-    j += "}"
-    return j
+    json += "}"
+    return json
   end
 end
 
