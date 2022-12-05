@@ -7,21 +7,16 @@ class Track
     segments.each do |s|
       segment_objects.append(TrackSegment.new(s))
     end
-    # set segments to segment_objects
+
     @segments = segment_objects
   end
 
   def get_track_json()
-    j = '{'
-    j += '"type": "Feature", '
+    j = '{"type": "Feature", '
     if @name != nil
-      j+= '"properties": {'
-      j += '"title": "' + @name + '"'
-      j += '},'
+      j += '"properties": {"title": "' + @name + '"},'
     end
-    j += '"geometry": {'
-    j += '"type": "MultiLineString",'
-    j +='"coordinates": ['
+    j += '"geometry": {"type": "MultiLineString","coordinates": ['
     # Loop through all the segment objects
     @segments.each_with_index do |s, index|
       if index > 0
@@ -35,15 +30,13 @@ class Track
           tsj += ','
         end
         # Add the coordinate
-        tsj += '['
-        tsj += "#{c.lon},#{c.lat}"
+        tsj += "[#{c.lon},#{c.lat}"
         if c.ele != nil
           tsj += ",#{c.ele}"
         end
         tsj += ']'
       end
-      j+=tsj
-      j+=']'
+      j+=tsj + ']'
     end
     j + ']}}'
   end
@@ -81,10 +74,7 @@ attr_reader :lat, :lon, :ele, :name, :type
   end
 
   def get_waypoint_json(indent=0)
-    j = '{"type": "Feature",'
-    # if name is not nil or type is not nil
-    j += '"geometry": {"type": "Point","coordinates": '
-    j += "[#{@lon},#{@lat}"
+    j = `{"type": "Feature","geometry": {"type": "Point","coordinates": [#{@lon},#{@lat}`
     if ele != nil
       j += ",#{@ele}"
     end
@@ -94,11 +84,11 @@ attr_reader :lat, :lon, :ele, :name, :type
       if name != nil
         j += '"title": "' + @name + '"'
       end
-      if type != nil  # if type is not nil
+      if type != nil
         if name != nil
           j += ','
         end
-        j += '"icon": "' + @type + '"'  # type is the icon
+        j += '"icon": "' + @type + '"'
       end
       j += '}'
     end
@@ -108,16 +98,16 @@ attr_reader :lat, :lon, :ele, :name, :type
 end
 
 class World
-def initialize(name, things)
-  @name = name
-  @features = things
-end
+  def initialize(name, things)
+    @name = name
+    @features = things
+  end
   def add_feature(f)
     @features.append(t)
   end
 
   def to_geojson(indent=0)
-    # Write stuff
+
     s = '{"type": "FeatureCollection","features": ['
     @features.each_with_index do |f,i|
       if i != 0
