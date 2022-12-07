@@ -19,15 +19,17 @@ class Track
     end
 
     json += '"geometry": {"type": "MultiLineString","coordinates": ['
+
     # Loop through all the segment objects
-    @segments.each_with_index do |seg, index|
-      if index > 0
+    @segments.each_with_index do |seg, i|
+      if i > 0
         json += ","
       end
 
       json += '['
-      # Loop through all the coordinates in the segment
       typescript_json = ''
+      
+      # Loop through all the coordinates in the segment
       seg.coordinates.each do |cord|
         if typescript_json != ''
           typescript_json += ','
